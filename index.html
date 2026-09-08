@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Supa Canvas — Audio lab</title>
+<style>
+:root{color-scheme:dark;font-family:Inter,system-ui,sans-serif;background:#090c10;color:#e9eef4;font-size:16px}*{box-sizing:border-box}body{margin:0}button,select,input{font:inherit}button,select,input[type=text],input[type=number]{background:#1b222c;color:inherit;border:1px solid #34404f;border-radius:7px;padding:9px 11px}button{cursor:pointer}button:hover{border-color:#a5f465}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #b5fa77;outline-offset:3px}.primary{background:#b5fa77;color:#102006;border-color:#b5fa77;font-weight:650}header{display:flex;align-items:center;justify-content:space-between;padding:19px 25px;border-bottom:1px solid #28303a;gap:16px;flex-wrap:wrap}.brand{font-weight:750;letter-spacing:.08em}.brand span{color:#b5fa77}.tag{font-size:12px;letter-spacing:.13em;color:#9caaba}main{display:grid;grid-template-columns:285px minmax(0,1fr);min-height:calc(100vh - 81px)}aside{padding:23px;border-right:1px solid #28303a;background:#10151c}h2{font-size:12px;letter-spacing:.15em;color:#b5fa77;margin:0 0 18px}section+section{border-top:1px solid #28303a;margin-top:25px;padding-top:24px}label{display:block;font-size:14px;color:#cbd4df;margin:13px 0 7px}select{width:100%}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row>*{min-width:0}.row button{flex:1}small,p.help{font-size:13px;color:#98a9bb;line-height:1.55}.help{margin:12px 0}input[type=range]{width:100%;accent-color:#b5fa77}input[type=checkbox]{accent-color:#b5fa77}.rangeLabel{display:flex;justify-content:space-between}output{font-variant-numeric:tabular-nums;color:#b5fa77}.workspace{padding:24px;min-width:0}.topline{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}h1{font-size:23px;margin:0;font-weight:550}.status{font-size:13px;color:#b5fa77}.stage{position:relative;background:#030407;border:1px solid #34404f;border-radius:10px;overflow:hidden;aspect-ratio:16/9}#canvas{width:100%;height:100%;display:block;touch-action:none}.stageLabel{position:absolute;left:15px;top:13px;font-size:12px;letter-spacing:.14em;color:#c4d2e5;pointer-events:none;background:#070c13b8;padding:7px;border-radius:4px}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin:20px 0}.metric{background:#111820;padding:15px;border:1px solid #273341;border-radius:8px}.metric span{font-size:12px;color:#9baabd;letter-spacing:.12em}.metric strong{display:block;font-size:24px;font-weight:450;margin:5px 0}meter{width:100%;height:7px}#spectrum{width:100%;height:65px;background:#10151c;border-radius:6px}.strip-output{margin:18px 0 20px;padding:12px 14px 13px;background:#10151c;border:1px solid #273341;border-radius:10px}.strip-output__heading{display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;font-size:11px;letter-spacing:.13em;color:#9baabd}.strip-output__heading strong{color:#b5fa77;font-weight:550}.strip-output canvas{width:100%;height:84px;display:block;border-radius:6px;background:#05080d}.mapping{display:grid;grid-template-columns:1fr 1fr;gap:22px}.mapping section{border:0;padding:0;margin:0}.mapping input[type=text]{width:100%}#message{min-height:20px;font-size:14px;color:#d9e6f4;line-height:1.5}details{margin-top:24px;border-top:1px solid #293542;padding-top:18px;font-size:14px;line-height:1.7}summary{cursor:pointer;color:#b5fa77}a{color:#b5fa77}li{margin:6px 0}.hidden{display:none}.footer{font-size:12px;color:#91a0b3;margin-top:22px}#canvas:focus-visible{outline:3px solid #b5fa77;outline-offset:-4px}@media(max-width:900px){main{grid-template-columns:240px minmax(0,1fr)}aside,.workspace{padding:16px}.metrics{grid-template-columns:repeat(2,1fr)}.mapping{grid-template-columns:1fr}}@media(max-width:650px){main{display:flex;flex-direction:column}.workspace{order:-1}aside{border:0}.stage{aspect-ratio:4/3}header{padding:16px}.topline{flex-wrap:wrap}h1{font-size:20px}}
+
+button:disabled{opacity:.45;cursor:wait}.source-note{padding:12px;border:1px solid #354537;border-radius:8px;background:#172218}.source-note strong{color:#b5fa77}.source-note button{margin-top:8px;width:100%}.looks{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 18px}.look{text-align:left;padding:13px;background:linear-gradient(135deg,#1e2a33,#11151f)}.look strong{display:block;font-size:13px}.look small{display:block;font-size:11px;margin-top:4px}.look[aria-pressed=true]{border-color:#b5fa77;background:#1e3025}.stage:fullscreen{width:100vw;height:100vh;border:0;border-radius:0;display:flex;align-items:center;justify-content:center}.stage:fullscreen canvas{width:100%;height:auto;max-height:100vh;object-fit:contain}.stage-tools{position:absolute;right:12px;top:12px}.stage-tools button{font-size:12px;background:#101820cc}.source-player{width:100%;height:34px;margin-top:10px}#audioMessage{overflow-wrap:anywhere}#effectHint{min-height:40px}.autosave{font-size:11px;color:#91a0b3}.topline .status{max-width:50%;overflow-wrap:anywhere;text-align:right}@media(max-width:700px){.looks{grid-template-columns:repeat(2,1fr)}}
+
+.mod-panel{border:1px solid #34404f;border-radius:10px;padding:16px;margin:0 0 18px;background:#111820}.mod-heading{display:flex;gap:16px;justify-content:space-between;align-items:center;flex-wrap:wrap}.mod-heading h2{margin:0}.mod-heading .help{margin:5px 0 0}.route{border-top:1px solid #2a3643;padding-top:12px;margin-top:12px}.route-main{display:grid;grid-template-columns:24px minmax(110px,1fr) 18px minmax(120px,1fr) minmax(100px,1fr) 34px;align-items:end;gap:8px}.route-main label{font-size:11px;margin:0}.route-main select{margin-top:6px;font-size:12px;padding:8px 5px}.route-main button{padding:8px}.route-main>span{align-self:center;color:#b5fa77}.route-params{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.route-params label{font-size:11px}.route-params output{float:right}.route-frequency[hidden]{display:none}.route-frequency{display:flex;align-items:center;gap:10px}.route-frequency label{font-size:11px}.route-frequency input{width:100px;font-size:12px}.route-meter{display:flex;align-items:center;gap:10px;font-size:11px;color:#a0b69e;margin-top:8px}.route-meter meter{flex:1}.route-muted{opacity:.55}.mod-panel+.looks{margin-top:0}@media(max-width:950px){.route-main{grid-template-columns:24px minmax(90px,1fr) 14px minmax(100px,1fr) 34px}.route-response{grid-column:2 / 5}.route-remove{grid-column:5;grid-row:1}.route-params{gap:8px}}@media(max-width:650px){.mod-panel{padding:12px}}
+.metrics{grid-template-columns:repeat(auto-fit,minmax(145px,1fr))}.intensity-meter meter{accent-color:#f778ba}
+.raw-spectrum{margin:0 0 20px;padding:12px 14px 11px;background:#10151c;border:1px solid #273341;border-radius:10px}.raw-spectrum__heading{display:flex;justify-content:space-between;gap:12px;margin-bottom:8px;font-size:11px;letter-spacing:.13em;color:#9baabd}.raw-spectrum__heading strong{color:#b5fa77;font-weight:550}.raw-spectrum canvas{width:100%;height:112px;display:block;border-radius:6px;background:#05080d}.raw-spectrum__bands{display:grid;grid-template-columns:2fr 4fr 5fr;gap:8px;margin-top:7px;font-size:10px;letter-spacing:.1em;color:#708397}.raw-spectrum__bands span:first-child{color:#a5f465}.raw-spectrum__bands span:nth-child(2){color:#7bc6ff}.raw-spectrum__bands span:last-child{color:#f778ba}
+.required-drivers{margin:10px 0 14px;padding:10px 11px;border:1px solid #39d9ef66;background:#0a273033;border-radius:7px}.required-drivers__label{display:block;margin-bottom:7px;font-size:10px;letter-spacing:.13em;color:#53e3f5}.required-drivers__items{display:flex;gap:6px;flex-wrap:wrap}.required-drivers__items span{padding:4px 6px;border:1px solid #43d7e655;border-radius:4px;color:#8cecf5;background:#092a323d;font-size:11px}
+.route-required{border-left:3px solid #53e3f5;padding-left:9px;background:#0a273022}.route-required .route-main{position:relative}.route-required-label{grid-column:2 / -1;color:#53e3f5;font-size:10px;letter-spacing:.12em}.route-required select:disabled{opacity:.8;color:#9deef6;border-color:#43d7e655}.route-required .route-remove{visibility:hidden}.route-required--fixed{border-left-color:#ff5a5f;background:#32121644}.route-required--fixed .route-required-label{color:#ff767a}.route-required--fixed select:disabled,.route-required--fixed input:disabled{color:#ff9b9e;border-color:#ff5a5f66}
+.signal-trace{margin:0 0 20px;padding:12px 14px;background:#10151c;border:1px solid #273341;border-radius:10px}.signal-trace__heading{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;font-size:11px;letter-spacing:.13em;color:#9baabd}.signal-trace__heading strong{color:#b5fa77;font-weight:550}.signal-trace__heading .row{gap:6px}.signal-trace__heading button{padding:6px 8px;font-size:11px}.signal-trace canvas{width:100%;height:108px;display:block;border-radius:6px;background:#05080d}.signal-trace__legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:7px;font-size:10px;letter-spacing:.08em;color:#72869a}.signal-trace__legend span:nth-child(1){color:#a5f465}.signal-trace__legend span:nth-child(2){color:#7bc6ff}.signal-trace__legend span:nth-child(3){color:#f778ba}.signal-trace__legend span:nth-child(4){color:#53e3f5}
+.master-panel{border:1px solid #5b4827;border-radius:10px;padding:16px;margin:0 0 18px;background:linear-gradient(135deg,#19150f,#111820)}.master-panel h2{color:#ffbe5c}.master-panel .help{margin:5px 0 13px}.master-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.master-control{padding:11px;border:1px solid #3d372b;border-radius:7px;background:#0c1016}.master-control label{margin:0 0 7px}.master-control output{color:#b5fa77}.master-control select{margin-top:8px;font-size:12px}.master-control__state{display:block;min-height:16px;margin-top:7px;font-size:10px;letter-spacing:.09em;color:#778492}.master-control--bound{border-color:#ffbd5c99;background:#281d0d}.master-control--bound output,.master-control--bound .master-control__state{color:#ffbe5c}.master-control--bound input[type=range]{accent-color:#ffbe5c}@media(max-width:650px){.master-grid{grid-template-columns:1fr}}
+.diagnostics{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:0 0 20px}.diagnostic{padding:12px 14px;background:#10151c;border:1px solid #273341;border-radius:10px}.diagnostic__heading{font-size:11px;letter-spacing:.13em;color:#9baabd;margin-bottom:8px}.diagnostic canvas{width:100%;height:116px;display:block;border-radius:6px;background:#05080d}.diagnostic--spectrogram canvas{height:150px}@media(max-width:760px){.diagnostics{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+<div class="brand">
+<span>SUPA</span> CANVAS <span class="tag"> / AUDIO LAB 02</span>
+</div>
+<div class="row">
+<span id="savedState" class="autosave">Scenes saved on this browser</span>
+<button id="load">Load scene</button>
+<button id="save">Export scene</button>
+</div>
+</header>
+<main>
+<aside>
+<section>
+<h2>01 / AUDIO SOURCE</h2>
+<div class="row">
+<button id="devices">Find inputs</button>
+<button id="stop">Stop audio</button>
+</div>
+<label for="input">Audio input</label>
+<select id="input">
+<option value="">Default microphone / input</option>
+</select>
+<button id="connect" class="primary" style="width:100%;margin-top:10px">Connect input</button>
+<div class="row" style="margin-top:10px">
+<button id="share">Share audio</button>
+<button id="demo">Demo signal</button>
+</div>
+<button id="openAudio" style="width:100%;margin-top:10px">Open audio file…</button>
+<audio id="player" class="source-player hidden" controls loop>
+</audio>
+<p id="audioMessage" class="help" role="status" aria-live="polite">Canvas is dormant. Connect an input or open an audio file. Demo is an optional synthetic test.</p>
+<div class="source-note">
+<small>
+<strong>Play Apple Music on this Mac</strong>
+<br>Route system output through BlackHole, then select it as the input above.</small>
+<button id="setup">Show Mac audio setup ↗</button>
+</div>
+</section>
+<section>
+<h2>02 / EFFECT ENGINE</h2>
+<label for="effect">Canvas effect</label>
+<select id="effect">
+<option value="organic" selected>Organic audio field</option>
+<option value="currents">Current trails</option>
+<option value="bloom">Mycelium bloom</option>
+<option value="pulse">Tidal pulses</option>
+<option value="embers">Treble embers</option>
+<option value="melody">Melody ribbon</option>
+<option value="vocal">Vocal halo</option>
+<option value="spectrum">Fluid spectrum</option>
+</select>
+<p id="effectHint" class="help">
+</p>
+<div id="requiredDrivers" class="required-drivers" aria-live="polite"></div>
+<label for="palette">Color palette</label>
+<select id="palette">
+<option value="neon">Electric / violet + mint</option>
+<option value="fire">Ember / red + gold</option>
+<option value="ice">Glacier / blue + cyan</option>
+<option value="candy">Candy / pink + blue</option>
+</select>
+<label class="rangeLabel" for="gain">Input gain <output id="gainValue">1.5×</output>
+</label>
+<input id="gain" type="range" min="0.2" max="5" step="0.1" value="1.5">
+<label class="rangeLabel" for="noise">Noise floor <output id="noiseValue">-60 dBFS</output>
+</label>
+<input id="noise" type="range" min="-90" max="-30" step="1" value="-60">
+<p class="help">Below this input level, the canvas holds completely still. Lower the floor for quiet music; raise it to ignore room noise. Quiet and loud passages are balanced automatically.</p>
+<label class="rangeLabel" for="brightness">Brightness <output id="brightnessValue">80%</output>
+</label>
+<input id="brightness" type="range" min="0" max="1" step="0.01" value="0.8">
+</section>
+</aside>
+<div class="workspace">
+<div class="topline">
+<h1>Sound becomes space.</h1>
+<span id="status" class="status">IDLE · CONNECT AUDIO TO BEGIN</span>
+</div>
+<div class="looks" aria-label="Quick looks">
+<button class="look" data-look="drift">
+<strong>01 · Current trails</strong>
+<small>Tempo-driven energy paths</small>
+</button>
+<button class="look" data-look="pulse">
+<strong>02 · Tidal pulses</strong>
+<small>Beat-launched wave fronts</small>
+</button>
+<button class="look" data-look="liquid">
+<strong>03 · Liquid light</strong>
+<small>Stateful flow memory</small>
+</button>
+<button class="look" data-look="bloom">
+<strong>04 · Mycelium bloom</strong>
+<small>Beat-seeded growth</small>
+</button>
+</div>
+<div class="stage">
+<canvas id="canvas" width="960" height="540" tabindex="0" aria-label="Effect canvas. Select an LED path node by clicking it, then use arrow keys to move it.">
+</canvas>
+<span class="stageLabel">SHARED CANVAS / 960 × 540</span>
+<div class="stage-tools">
+<button id="fullscreen">Fullscreen ⤢</button>
+</div>
+</div>
+<section class="strip-output" aria-label="Mapped LED output preview">
+<div class="strip-output__heading"><strong>1D LED OUTPUT</strong><span id="stripOutputMeta">0 STRIPS</span></div>
+<canvas id="stripOutput" width="960" height="168" aria-label="One-dimensional preview of mapped LED strip colors"></canvas>
+</section>
+<div class="metrics">
+<div class="metric">
+<span>BASS · 20–250 HZ</span>
+<strong id="bassText">0%</strong>
+<meter id="bassMeter" min="0" max="1">
+</meter>
+</div>
+<div class="metric">
+<span>MIDS · 250–2K HZ</span>
+<strong id="midText">0%</strong>
+<meter id="midMeter" min="0" max="1">
+</meter>
+</div>
+<div class="metric">
+<span>HIGH · 2K–12K HZ</span>
+<strong id="highText">0%</strong>
+<meter id="highMeter" min="0" max="1">
+</meter>
+</div>
+<div class="metric">
+<span>INPUT RMS</span>
+<strong id="rmsText">—</strong>
+<small id="onset">Waiting</small>
+</div>
+<div class="metric intensity-meter">
+<span>PEAK INTENSITY</span>
+<strong id="intensityText">0%</strong>
+<meter id="intensityMeter" min="0" max="1"></meter>
+</div>
+<div class="metric">
+<span>TEMPO ESTIMATE</span>
+<strong id="bpmText">— BPM</strong>
+<small id="beatConfidence">Listening for pulses</small>
+<meter id="beatMeter" min="0" max="1"></meter>
+</div>
+</div>
+<section class="raw-spectrum" aria-label="Raw incoming audio spectrum">
+<div class="raw-spectrum__heading"><strong>RAW AUDIO SPECTRUM · LOG FREQUENCY</strong><span id="spectrumState">WAITING FOR INPUT</span></div>
+<canvas id="spectrum" width="960" height="112" aria-label="Raw frequency spectrum from 30 to 12000 hertz"></canvas>
+<div class="raw-spectrum__bands"><span>BASS · 30–250 HZ</span><span>MIDS · 250–2K HZ</span><span>TREBLE · 2K–12K HZ</span></div>
+</section>
+<section class="diagnostics" aria-label="Live audio diagnostics">
+<div class="diagnostic"><div class="diagnostic__heading">LIVE WAVEFORM · INPUT SHAPE</div><canvas id="waveform" width="480" height="116" aria-label="Live audio waveform"></canvas></div>
+<div class="diagnostic diagnostic--spectrogram"><div class="diagnostic__heading">SCROLLING SPECTROGRAM · LOG FREQUENCY + AMPLITUDE · <span id="melodyState">MELODY LISTENING</span></div><canvas id="spectrogram" width="480" height="150" aria-label="Scrolling audio spectrogram"></canvas></div>
+</section>
+<section class="signal-trace" aria-label="Audio response trace">
+<div class="signal-trace__heading"><strong>LIVE RESPONSE TRACE</strong><div class="row"><span id="traceStatus">LIVE · LAST 12 S</span><button id="captureTrace">Capture data</button><button id="exportTrace" disabled>Export JSON</button></div></div>
+<canvas id="signalTrace" width="960" height="108" aria-label="Raw and smoothed audio response history"></canvas>
+<div class="signal-trace__legend"><span>RAW BASS</span><span>SMOOTHED BANDS</span><span>PEAK INTENSITY</span><span>BEAT / IMPACT</span></div>
+</section>
+<section class="master-panel" aria-label="Master controls">
+<div class="mod-heading"><div><h2>MASTER / GLOBAL RESPONSE</h2><p class="help">Set the manual baseline, then optionally let one audio attribute add to it.</p></div></div>
+<div class="master-grid">
+<div id="smoothMaster" class="master-control"><label class="rangeLabel" for="smooth">Pixel fade time <output id="smoothValue">0.55 s</output></label><input id="smooth" type="range" min="0" max="2" step="0.05" value="0.55"><select id="smoothBind" aria-label="Pixel fade audio driver"></select><span id="smoothBindState" class="master-control__state">MANUAL</span></div>
+<div id="speedMaster" class="master-control"><label class="rangeLabel" for="speed">Effect speed <output id="speedValue">0.35×</output></label><input id="speed" type="range" min="0" max="1" step="0.05" value="0.35"><select id="speedBind" aria-label="Effect speed audio driver"></select><span id="speedBindState" class="master-control__state">MANUAL</span></div>
+</div>
+</section>
+<section class="mod-panel">
+<div class="mod-heading">
+<div>
+<h2>AUDIO → ATTRIBUTES</h2>
+<p class="help">Build a look from the parts of the music that are active.</p>
+</div>
+<div class="row">
+<button id="generative">Try generative mix</button>
+<button id="addRoute" class="primary">+ Add pairing</button>
+</div>
+</div>
+<p class="help">Structure is the action driver: it spawns bodies, starts growth, or launches waves. Peak intensity sets how bright those resulting crests and bodies become. Peak sharpness shapes their edge; scale changes their size. Silence holds the current frame.</p>
+<div id="routes">
+</div>
+<p id="routeEmpty" class="help">Choose an engine to add its required Structure, Peak intensity, and Motion speed pairings.</p>
+<p id="routeStatus" class="help" role="status" aria-live="polite">
+</p>
+</section>
+<section class="mapping">
+<section>
+<h2>03 / LED PATHS</h2>
+<label for="fixture">Selected path</label>
+<select id="fixture">
+</select>
+<div class="row" style="margin-top:10px">
+<button id="add">Add path</button>
+<button id="remove">Remove</button>
+<button id="node">Add point</button>
+</div>
+<p class="help">Drag the white points to map a strip. Select a point and use arrow keys for fine adjustment. LEDs sample the canvas along each path.</p>
+<label>
+<input type="checkbox" id="overlay" checked> Show LED paths and sampled colors</label>
+<label>
+<input type="checkbox" id="ledOnly"> LEDs only</label>
+</section>
+<section>
+<h2>04 / PATH PROPERTIES</h2>
+<label for="name">Name</label>
+<input id="name" type="text" maxlength="60">
+<div class="row">
+<div>
+<label for="count">LED count</label>
+<input id="count" type="number" min="2" max="1000" style="width:110px">
+</div>
+<div>
+<label for="reverse">Direction</label>
+<button id="reverse">Reverse path</button>
+</div>
+</div>
+<div id="message" role="status" aria-live="polite">
+</div>
+</section>
+</section>
+<details id="audioSetup">
+<summary>Apple Music setup & what this prototype does</summary>
+<ol>
+<li>Install <a href="https://github.com/ExistentialAudio/BlackHole" target="_blank" rel="noreferrer">BlackHole 2ch</a>.</li>
+<li>Open Audio MIDI Setup → + → Create Multi-Output Device. Enable your speakers or wired headphones and BlackHole. Use the physical output as the primary clock; enable drift correction on BlackHole. Use matching sample rates.</li>
+<li>Select that Multi-Output Device as your Mac’s sound output, then play Apple Music. <a href="https://github.com/ExistentialAudio/BlackHole/wiki/Multi-Output-Device" target="_blank" rel="noreferrer">Detailed routing instructions</a>.</li>
+<li>Click Find inputs, allow audio permission, choose BlackHole 2ch, and click Connect input. If asked, macOS microphone permission also covers virtual audio inputs. This app never monitors the input back to speakers.</li>
+</ol>
+<p>Share audio is an alternate browser capture option. Choose an audio-capable source and enable audio sharing. If the browser supplies no audio track, use BlackHole. Use Chrome for the initial experiment. No audio is uploaded or recorded.</p>
+<p>This version analyzes audio, renders nine effects, previews LED samples, and exports editable scenes. It does not discover or send data to WLED controllers. A local UDP bridge is the next step for DDP output. Later, ESP32 firmware can evaluate effects at LED coordinates using the same normalized paths. It will need an audio source: microphone, line-in hardware, or audio features sent from the Mac. Flashing this HTML alone will not make the ESP32 capture Mac audio.</p>
+<p>Scenes contain effect settings and paths, not audio. Changes are saved in this browser automatically. Export scene makes a portable backup; Load scene restores one. Audio files play locally and can be paused or scrubbed using the player.</p>
+</details>
+<div class="footer">LOCAL EXPERIMENT · Audio → analysis → effect field → LED samples</div>
+</div>
+</main>
+<input id="audioFile" class="hidden" type="file" accept="audio/*">
+<input id="file" class="hidden" type="file" accept="application/json,.json">
+<script src="modulation.js">
+</script>
+<script src="app.js">
+</script>
+</body>
+</html>
